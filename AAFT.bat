@@ -149,7 +149,7 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
     Title AATF %%~I
 	
     findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
-    flattenwarp -lambda 2 %%~I_flat.mod %%~I_flat.xf
+    flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
@@ -164,9 +164,9 @@ GOTO MENU
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
 	
-    findsection -scal 12 -size 64,64,10 -axis -10.9 -surf %%~I_flat.mod %%~I
+    findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
     START /WAIT 3dmod -Y %%I %%~I_flat.mod
-    flattenwarp -lambda 2 %%~I_flat.mod %%~I_flat.xf
+    flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
