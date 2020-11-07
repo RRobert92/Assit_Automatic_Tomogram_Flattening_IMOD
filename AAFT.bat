@@ -1,18 +1,18 @@
-################################################################################
-# Assisted or Automatic Tomogram Flattening
-#
-# Batch script for running IMOD/Etomo executables for the tomogram flattening
-#
-# (c) 2019 Kiewisz
-# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
-#
-# Author: Robert Kiewisz
-# Created: 2020-11-07
-################################################################################
+::################################################################################
+::# Assisted or Automatic Tomogram Flattening
+::#
+::# Batch script for running IMOD/Etomo executables for the tomogram flattening
+::#
+::# (c) 2019 Kiewisz
+::# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+::#
+::# Author: Robert Kiewisz
+::# Created: 2020-11-07
+::################################################################################
 
 <# : chooser.bat
 :: https://stackoverflow.com/a/15885133/1683264
-
+:: https://bio3d.colorado.edu/imod/
 Title AATF
 setlocal
 cls
@@ -59,10 +59,10 @@ IF %S%==1 GOTO SETTING
 IF %S%==2 IF %M%==1 GOTO AUTO
 IF %S%==2 IF %M%==2 GOTO ASSIST
 
-## Set up a parameaters for 'findsection'
+::## Set up a parameaters for 'findsection'
 :SETTING
 
-## Set up a size of the box for 'findsection'
+::## Set up a size of the box for 'findsection'
 ECHO.
 ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
@@ -90,7 +90,7 @@ set /p SIZE=Enter size:
 ECHO.
 cls
 
-## Set up a tomogram  axis for 'findsection'
+::## Set up a tomogram  axis for 'findsection'
 ECHO.
 ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
@@ -110,7 +110,7 @@ set /p AXIS=Enter axis:
 ECHO.
 cls
 
-## Set up a smoothing factor for 'flattenwarp'
+::## Set up a smoothing factor for 'flattenwarp'
 ECHO.
 ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
@@ -143,7 +143,7 @@ cls
 IF %M%==1 GOTO AUTO
 IF %M%==2 GOTO ASSIST
 
-## Full-automatic tomogram flattening
+::## Full-automatic tomogram flattening
 GOTO MENU
 :AUTO
 
@@ -159,7 +159,7 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
 )
 goto :EOF
 
-## Assist tomogram flattening
+::## Assist tomogram flattening
 GOTO MENU
 :ASSIST
 
