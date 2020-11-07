@@ -51,17 +51,16 @@ ECHO 2 - No
 ECHO.
 
 SET /P S = Select number then press ENTER:
-cls
 
+cls
 IF %S% == 1 GOTO SETTING
 IF %S% == 2 IF %M% == 1 GOTO AUTO
 IF %S% == 2 IF %M% == 2 GOTO ASSIST
-cls
 
 ## Set up a parameaters for 'findsection'
 :SETTING
 
-## Set up a Size of the box for 'findsection'
+## Set up a size of the box for 'findsection'
 ECHO.
 ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
@@ -87,9 +86,9 @@ ECHO.
 ECHO.
 set /p SIZE = Enter size:
 ECHO.
+cls
 
 ## Set up a tomogram  axis for 'findsection'
-cls
 ECHO.
 ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
@@ -110,7 +109,6 @@ ECHO.
 cls
 
 ## Set up a smoothing factor for 'flattenwarp'
-cls
 ECHO.
 ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
@@ -143,26 +141,28 @@ cls
 IF %M% == 1 GOTO AUTO
 IF %M% == 2 GOTO ASSIST
 
+## Full-automatic tomogram flattening
 GOTO MENU
 :AUTO
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
-	Title AATF %%~I
+    Title AATF %%~I
 	
     findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
     flattenwarp -lambda 2 %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
-	cls
+    cls
 )
 goto :EOF
 
+## Assist tomogram flattening
 GOTO MENU
 :ASSIST
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
-	Title AATF %%~I
+    Title AATF %%~I
 	
     findsection -scal 12 -size 64,64,10 -axis -10.9 -surf %%~I_flat.mod %%~I
     START /WAIT 3dmod -Y %%I %%~I_flat.mod
@@ -170,7 +170,7 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
-	cls
+    cls
 )
 goto :EOF
 
