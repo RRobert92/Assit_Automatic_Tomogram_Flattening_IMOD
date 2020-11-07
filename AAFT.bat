@@ -1,23 +1,24 @@
-################################################################################
-# Assisted or Automatic Tomogram Flattening
-#
-# Batch script for running IMOD/Etomo executables for the tomogram flattening
-#
-# (c) 2019 Kiewisz
-# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
-#
-# Author: Robert Kiewisz
-# Created: 2020-11-07
-################################################################################
+<# : chooser.bat
+::################################################################################
+::# Assisted or Automatic Tomogram Flattening
+::#
+::# Batch script for running IMOD/Etomo executables for the tomogram flattening
+::#
+::# (c) 2019 Kiewisz
+::# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+::#
+::# Author: Robert Kiewisz
+::# Created: 2020-11-07
+::################################################################################
 
 <# : chooser.bat
-# https://stackoverflow.com/a/15885133/1683264
-# https://bio3d.colorado.edu/imod/
+::# https://stackoverflow.com/a/15885133/1683264
+::# https://bio3d.colorado.edu/imod/
 Title AATF
 setlocal
 cls
-
 @echo off
+
 :MENU
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
@@ -67,8 +68,8 @@ ECHO 2 - No
 ECHO.
 
 SET /P S=Select number then press ENTER:
-
 cls
+
 IF %S%==1 GOTO SETTING
 IF %S%==2 IF %M%==1 GOTO AUTOSTD
 IF %S%==2 IF %M%==2 GOTO ASSISTSTD
@@ -100,7 +101,7 @@ ECHO Select size of boxes in XYZ
 ECHO 16,16,1 - Suggested for a dataset with high contrast and very good quality
 ECHO 32,32,1 - 'Standard setting'
 ECHO 64,64,1 - Suggested for data with low contrast. (Higher value can be use)
-ECHO 64,64,10 - Allows to bin stack in Z for higher accuracy
+ECHO 64,64,10 - Allows to bin stack in Z for higher accuracy with low contrast data
 ECHO ..........................................................................
 ECHO.
 ECHO.
@@ -164,11 +165,10 @@ ECHO.
 set /p LAMBDA=Enter size:
 cls
 
-IF %M%==1 GOTO AUTO
-IF %M%==2 GOTO ASSIST
+IF %S%==1 IF %M%==1 GOTO AUTO
+IF %S%==1 IF %M%==2 GOTO ASSIST
 
 ::## Full-automatic tomogram flattening
-GOTO MENU
 :AUTO
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
@@ -184,7 +184,6 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
 goto :EOF
 
 ::## Full-automatic tomogram flattening with standard settings
-GOTO MENU
 :AUTOSTD
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
@@ -200,7 +199,6 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
 goto :EOF
 
 ::## Assist tomogram flattening
-GOTO MENU
 :ASSIST
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
@@ -217,7 +215,6 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
 goto :EOF
 
 ::## Assist tomogram flattening with a standard settings
-GOTO MENU
 :ASSISTSTD
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
@@ -233,13 +230,12 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
 )
 goto :EOF
 
-GOTO MENU
+
 :EOF
 
 goto :EOF
 
 : end Batch portion / begin PowerShell hybrid chimera #>
-
 Add-Type -AssemblyName System.Windows.Forms
 $f = new-object Windows.Forms.OpenFileDialog
 $f.InitialDirectory = pwd
