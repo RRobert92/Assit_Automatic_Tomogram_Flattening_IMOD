@@ -33,9 +33,9 @@ ECHO 2 - Run assisted tomography flattening
 ECHO 3 - EXIT
 ECHO.
 
-SET /P M = Select number then press ENTER:
+SET /P M=Select number then press ENTER:
 
-IF %M% == 3 GOTO EOF
+IF %M%==3 GOTO EOF
 cls
 
 ECHO.
@@ -50,12 +50,12 @@ ECHO 1 - Yes
 ECHO 2 - No
 ECHO.
 
-SET /P S = Select number then press ENTER:
+SET /P S=Select number then press ENTER:
 
 cls
-IF %S% == 1 GOTO SETTING
-IF %S% == 2 IF %M% == 1 GOTO AUTO
-IF %S% == 2 IF %M% == 2 GOTO ASSIST
+IF %S%==1 GOTO SETTING
+IF %S%==2 IF %M%==1 GOTO AUTO
+IF %S%==2 IF %M%==2 GOTO ASSIST
 
 ## Set up a parameaters for 'findsection'
 :SETTING
@@ -84,7 +84,7 @@ ECHO 64,64,10 - allows to bin stack in Z for higher accuracy
 ECHO ..........................................................................
 ECHO.
 ECHO.
-set /p SIZE = Enter size:
+set /p SIZE=Enter size:
 ECHO.
 cls
 
@@ -104,7 +104,7 @@ ECHO centered on the original tilt series.
 ECHO ..........................................................................
 ECHO.
 ECHO.
-set /p AXIS = Enter axis:
+set /p AXIS=Enter axis:
 ECHO.
 cls
 
@@ -134,12 +134,12 @@ ECHO         but also introduce more smoothing artifacts.
 ECHO ..........................................................................
 ECHO.
 ECHO.
-set /p LAMBDA = Enter size:
+set /p LAMBDA=Enter size:
 ECHO.
 cls
 
-IF %M% == 1 GOTO AUTO
-IF %M% == 2 GOTO ASSIST
+IF %M%==1 GOTO AUTO
+IF %M%==2 GOTO ASSIST
 
 ## Full-automatic tomogram flattening
 GOTO MENU
