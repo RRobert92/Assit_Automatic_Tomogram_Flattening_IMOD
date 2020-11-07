@@ -1,18 +1,18 @@
-::################################################################################
-::# Assisted or Automatic Tomogram Flattening
-::#
-::# Batch script for running IMOD/Etomo executables for the tomogram flattening
-::#
-::# (c) 2019 Kiewisz
-::# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
-::#
-::# Author: Robert Kiewisz
-::# Created: 2020-11-07
-::################################################################################
+################################################################################
+# Assisted or Automatic Tomogram Flattening
+#
+# Batch script for running IMOD/Etomo executables for the tomogram flattening
+#
+# (c) 2019 Kiewisz
+# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+#
+# Author: Robert Kiewisz
+# Created: 2020-11-07
+################################################################################
 
 <# : chooser.bat
-:: https://stackoverflow.com/a/15885133/1683264
-:: https://bio3d.colorado.edu/imod/
+# https://stackoverflow.com/a/15885133/1683264
+# https://bio3d.colorado.edu/imod/
 Title AATF
 setlocal
 cls
@@ -70,8 +70,8 @@ SET /P S=Select number then press ENTER:
 
 cls
 IF %S%==1 GOTO SETTING
-IF %S%==2 IF %M%==1 GOTO AUTO
-IF %S%==2 IF %M%==2 GOTO ASSIST
+IF %S%==2 IF %M%==1 GOTO AUTOSTD
+IF %S%==2 IF %M%==2 GOTO ASSISTSTD
 
 ::## Set up a parameaters for 'findsection'
 :SETTING
@@ -174,18 +174,24 @@ GOTO MENU
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
 
-ECHO #############################################
-ECHO # Assisted or Automatic Tomogram Flattening #
-ECHO #############################################
-ECHO (c) 2019 Kiewisz
-ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
-ECHO.
-ECHO.
-ECHO Flattening file %%~I
-ECHO.
-
     findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
     flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
+    warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
+	
+    del /f %%~I_flat.xf
+    cls
+)
+goto :EOF
+
+::## Full-automatic tomogram flattening with standard settings
+GOTO MENU
+:AUTOSTD
+
+for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
+    Title AATF %%~I
+
+    findsection -scal 12 -size 32,32,1 -surf %%~I_flat.mod %%~I
+    flattenwarp -lambda 2 %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
@@ -200,19 +206,26 @@ GOTO MENU
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
 
-ECHO #############################################
-ECHO # Assisted or Automatic Tomogram Flattening #
-ECHO #############################################
-ECHO (c) 2019 Kiewisz
-ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
-ECHO.
-ECHO.
-ECHO Flattening file %%~I
-ECHO.
-
     findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
     START /WAIT 3dmod -Y %%I %%~I_flat.mod
     flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
+    warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
+	
+    del /f %%~I_flat.xf
+    cls
+)
+goto :EOF
+
+::## Assist tomogram flattening with a standard settings
+GOTO MENU
+:ASSISTSTD
+
+for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
+    Title AATF %%~I
+
+    findsection -scal 12 -size 32,32,1 -surf %%~I_flat.mod %%~I
+    START /WAIT 3dmod -Y %%I %%~I_flat.mod
+    flattenwarp -lambda 2 %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
