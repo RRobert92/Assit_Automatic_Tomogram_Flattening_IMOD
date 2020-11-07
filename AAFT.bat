@@ -19,11 +19,21 @@ cls
 
 @echo off
 :MENU
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
-ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
 ECHO This script running IMOD executables and allows for the assisted automated 
 ECHO flattening.
+ECHO.
+ECHO The Automatic flattening with the 'standard settings' is sufficient for the majority
+ECHO of the samples with good quality.
+ECHO.
+ECHO The assisted flattening allows for automatic generation of the surface model
+ECHO and quick/easy fixing it before running flattening with 'warpvol'
 ECHO.
 ECHO ..........................................................................
 ECHO PRESS 1, 2 to select your task or 3 to EXIT.
@@ -32,7 +42,7 @@ ECHO.
 ECHO.
 ECHO 1 - Run fully-automated tomography flattening
 ECHO 2 - Run assisted tomography flattening
-ECHO 3 - EXIT
+ECHO 3 - Exit
 ECHO.
 
 SET /P M=Select number then press ENTER:
@@ -40,8 +50,12 @@ SET /P M=Select number then press ENTER:
 IF %M%==3 GOTO EOF
 cls
 
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
-ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
 ECHO ..........................................................................
 ECHO Do you want to modify the standard parameters used for 'findsection'?
@@ -63,8 +77,12 @@ IF %S%==2 IF %M%==2 GOTO ASSIST
 :SETTING
 
 ::## Set up a size of the box for 'findsection'
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
-ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
 ECHO ..........................................................................
 ECHO Select box sizes
@@ -79,20 +97,23 @@ ECHO entered. The entry is required.  (Successive entries accumulate)
 ECHO.
 ECHO.
 ECHO Select size of boxes in XYZ
-ECHO 16,16,1 - suggested for a dataset with high contrast
-ECHO 32,32,1 - standard setting
-ECHO 64,64,1 - or higher is suggested for data with low contrast
-ECHO 64,64,10 - allows to bin stack in Z for higher accuracy
+ECHO 16,16,1 - Suggested for a dataset with high contrast and very good quality
+ECHO 32,32,1 - 'Standard setting'
+ECHO 64,64,1 - Suggested for data with low contrast. (Higher value can be use)
+ECHO 64,64,10 - Allows to bin stack in Z for higher accuracy
 ECHO ..........................................................................
 ECHO.
 ECHO.
 set /p SIZE=Enter size:
-ECHO.
 cls
 
 ::## Set up a tomogram  axis for 'findsection'
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
-ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
 ECHO ..........................................................................
 ECHO Select a tomogram axis:
@@ -107,12 +128,15 @@ ECHO ..........................................................................
 ECHO.
 ECHO.
 set /p AXIS=Enter axis:
-ECHO.
 cls
 
 ::## Set up a smoothing factor for 'flattenwarp'
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
-ECHO Assisted or Automatic Tomogram Flattening
 ECHO.
 ECHO ..........................................................................
 ECHO Select the lambda (smoothing) factor:
@@ -129,15 +153,15 @@ ECHO as meaningful as positive ones.
 ECHO.
 ECHO.
 ECHO Select smoothing factor:
-ECHO 1    - No smoothing
-ECHO 2    - Standard setting
-ECHO 3 >= - Introduce more smoothing for highly warped tomogram, 
-ECHO         but also introduce more smoothing artifacts.
+ECHO 1   - No smoothing
+ECHO 2   - 'Standard setting'
+ECHO 3   - Introduce more smoothing for highly warped tomogram
+ECHO       but also introduce more smoothing artifacts.
+ECHO       (Higher value can be use)
 ECHO ..........................................................................
 ECHO.
 ECHO.
 set /p LAMBDA=Enter size:
-ECHO.
 cls
 
 IF %M%==1 GOTO AUTO
@@ -149,7 +173,17 @@ GOTO MENU
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
-	
+
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+ECHO.
+ECHO.
+ECHO Flattening file %%~I
+ECHO.
+
     findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
     flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
@@ -165,7 +199,17 @@ GOTO MENU
 
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
-	
+
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+ECHO.
+ECHO.
+ECHO Flattening file %%~I
+ECHO.
+
     findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
     START /WAIT 3dmod -Y %%I %%~I_flat.mod
     flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
