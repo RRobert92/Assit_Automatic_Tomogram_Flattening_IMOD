@@ -30,8 +30,8 @@ ECHO.
 ECHO This script running IMOD executables and allows for the assisted automated 
 ECHO flattening.
 ECHO.
-ECHO The Automatic flattening with the 'standard settings' is sufficient for the majority
-ECHO of the samples with good quality.
+ECHO The Automatic flattening with the 'standard settings' is sufficient for the
+ECHO majority of the samples with good quality.
 ECHO.
 ECHO The assisted flattening allows for automatic generation of the surface model
 ECHO and quick/easy fixing it before running flattening with 'warpvol'
@@ -42,7 +42,7 @@ ECHO ..........................................................................
 ECHO.
 ECHO.
 ECHO 1 - Run fully-automated tomography flattening
-ECHO 2 - Run assisted tomography flattening
+ECHO 2 - Run manual tomography flattening
 ECHO 3 - Exit
 ECHO.
 
@@ -56,7 +56,7 @@ cls
 ::## Set up a parameaters for 'findsection'
 :SETTING
 
-::## Set up a size of the box for 'findsection'
+::## Set up a size of the scaler for 'findsection'
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
@@ -67,11 +67,11 @@ ECHO.
 ECHO ..........................................................................
 ECHO Select box sizes
 ECHO.
-ECHO This option can be used to specify how many default binnings to
-ECHO analyze, instead of entering each one with the -binning option.
-ECHO These binnings are isotropic (the same in each dimension).  The
-ECHO default binnings available are 1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
-ECHO 48, and 64. The default is to do a single scale at binning 12.
+ECHO This option can be used to specify how many default binnings to analyze, 
+ECHO instead of entering each one with the -binning option. These binnings are 
+ECHO isotropic (the same in each dimension).  The default binnings available are 
+ECHO 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, and 64. The default is to do a single
+ECHo scale at binning 12.
 ECHO.
 ECHO.
 ECHO Select size of boxes in XYZ
@@ -94,15 +94,14 @@ ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
 ECHO ..........................................................................
-ECHO Select box sizes
+ECHO Select patch sizes
 ECHO.
-ECHO Size in X, Y, and Z of boxes in which to measure mean and SD, in
-ECHO binned pixels.  This option can be entered multiple times, up to
-ECHO once per each scaling, but one entry seems to be sufficient.
-ECHO For scalings past the last one for which a size was entered, the
-ECHO size in each dimension will be set to span about the same extent
-ECHO in unbinned pixels as for the last binning for which size was
-ECHO entered. The entry is required. (Successive entries accumulate)
+ECHO Size in X, Y, and Z of boxes in which to measure mean and SD, in binned 
+ECHO pixels.  This option can be entered multiple times, up to once per each 
+ECHO scaling, but one entry seems to be sufficient. For scalings past the last 
+ECHO one for which a size was entered, the size in each dimension will be set to 
+ECHO span about the same extent in unbinned pixels as for the last binning for 
+ECHO which size was entered. The entry is required. (Successive entries accumulate)
 ECHO.
 ECHO.
 ECHO Select size of boxes in XYZ
@@ -113,7 +112,58 @@ ECHO 64,64,10 - Allows to bin stack in Z for higher accuracy with low contrast d
 ECHO ..........................................................................
 ECHO.
 ECHO.
-set /p SIZE=Enter size:
+set /p SIZE=Enter patch size:
+cls
+
+::## Set up a tomogram  sampling for 'findsection'
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+ECHO.
+ECHO.
+ECHO ..........................................................................
+ECHO Select a sampling size:
+ECHO.
+ECHO Number of positions to sample in a single tomogram to obtain lines for 
+ECHO Tomopitch.  The position and spacing between these samples is determined by 
+ECHO their number, the sample extent, and the total number of blocks of analyzed 
+ECHO boxes in Y.
+ECHO ..........................................................................
+ECHO.
+ECHO.
+ECHO Select of sampling positions
+ECHO 5 - 'Standard setting'
+ECHO.
+set /p SAMPLE=Enter sampling:
+cls
+
+::## Set up a tomogram  block size for 'findsection'
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+ECHO.
+ECHO.
+ECHO ..........................................................................
+ECHO Select a block size:
+ECHO.
+ECHO Size of block in which to consolidate the boxes for further analysis, 
+ECHO in unbinned pixels.  If this option is not entered, the program will start 
+ECHO with a size of 100 pixels, or 200 if making a surface model, and then 
+ECHO increase the size to get an equivalent area if there are too few boxes in 
+ECHO one direction (specifically, when using multiple tomogram samples, the size 
+ECHO generally gets increased to ~300). If the option is entered, the number
+ECHO is used as is, without such an adjustment.
+ECHO ..........................................................................
+ECHO.
+ECHO.
+ECHO Select of sampling positions
+ECHO 48 - 'Standard setting'
+ECHO.
+set /p BLOCK=Enter block size:
 cls
 
 ::## Set up a tomogram  axis for 'findsection'
@@ -162,11 +212,11 @@ ECHO as meaningful as positive ones.
 ECHO.
 ECHO.
 ECHO Select smoothing factor:
-ECHO 1   - No smoothing
-ECHO 2   - 'Standard setting'
-ECHO 3   - Introduce more smoothing for highly warped tomogram
-ECHO       but also introduce more smoothing artifacts.
-ECHO       (Higher value can be use)
+ECHO 1 - No smoothing
+ECHO 2 - 'Standard setting'
+ECHO 3 - Introduce more smoothing for highly warped tomogram
+ECHO     but also introduce more smoothing artifacts.
+ECHO 4 >= - Higher smoothing value used only for highly deform tomograms
 ECHO ..........................................................................
 ECHO.
 ECHO.
@@ -219,7 +269,7 @@ goto :EOF
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
 
-    findsection -scal %SCALE% -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
+    findsection -scal %SCALE% -size %SIZE% -axis %AXIS% -samples %SAMPLE% -block %BLOCK% -surf %%~I_flat.mod %%~I
     START /WAIT 3dmod -Y %%I %%~I_flat.mod
     flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
