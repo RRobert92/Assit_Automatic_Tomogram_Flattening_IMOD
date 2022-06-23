@@ -4,7 +4,7 @@
 ::#
 ::# Batch script for running IMOD/Etomo executables for the tomogram flattening
 ::#
-::# (c) 2019-2022 Kiewisz
+::# (c) 2019 Kiewisz
 ::# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ::#
 ::# Author: Robert Kiewisz
@@ -23,7 +23,7 @@ cls
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019-2002 Kiewisz
+ECHO (c) 2019 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -60,7 +60,7 @@ cls
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019-2022 Kiewisz
+ECHO (c) 2019 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -89,7 +89,7 @@ cls
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019-2022 Kiewisz
+ECHO (c) 2019 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -120,7 +120,7 @@ cls
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019-2022 Kiewisz
+ECHO (c) 2019 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -143,7 +143,7 @@ cls
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019-2022 Kiewisz
+ECHO (c) 2019 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -182,7 +182,7 @@ IF %M%==2 GOTO ASSIST
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019-2022 Kiewisz
+ECHO (c) 2019 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
