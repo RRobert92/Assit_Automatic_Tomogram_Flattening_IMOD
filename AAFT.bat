@@ -4,7 +4,7 @@
 ::#
 ::# Batch script for running IMOD/Etomo executables for the tomogram flattening
 ::#
-::# (c) 2019 Kiewisz
+::# (c) 2019-2022 Kiewisz
 ::# This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ::#
 ::# Author: Robert Kiewisz
@@ -23,7 +23,7 @@ cls
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019 Kiewisz
+ECHO (c) 2019-2002 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -49,12 +49,13 @@ ECHO.
 SET /P M=Select number then press ENTER:
 
 IF %M%==3 GOTO EOF
+IF %M%==1 GOTO AUTO
 cls
 
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019 Kiewisz
+ECHO (c) 2019-2022 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -71,8 +72,7 @@ SET /P S=Select number then press ENTER:
 cls
 
 IF %S%==1 GOTO SETTING
-IF %S%==2 IF %M%==1 GOTO AUTOSTD
-IF %S%==2 IF %M%==2 GOTO ASSISTSTD
+IF %S%==2 IF %M%==2 GOTO ASSIST
 
 ::## Set up a parameaters for 'findsection'
 :SETTING
@@ -81,7 +81,7 @@ IF %S%==2 IF %M%==2 GOTO ASSISTSTD
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019 Kiewisz
+ECHO (c) 2019-2022 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -94,7 +94,7 @@ ECHO once per each scaling, but one entry seems to be sufficient.
 ECHO For scalings past the last one for which a size was entered, the
 ECHO size in each dimension will be set to span about the same extent
 ECHO in unbinned pixels as for the last binning for which size was
-ECHO entered. The entry is required.  (Successive entries accumulate)
+ECHO entered. The entry is required. (Successive entries accumulate)
 ECHO.
 ECHO.
 ECHO Select size of boxes in XYZ
@@ -108,11 +108,40 @@ ECHO.
 set /p SIZE=Enter size:
 cls
 
+::## Set up a size of the box for 'findsection'
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019-2022 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+ECHO.
+ECHO.
+ECHO ..........................................................................
+ECHO Select box sizes
+ECHO.
+ECHO This option can be used to specify how many default binnings to
+ECHO analyze, instead of entering each one with the -binning option.
+ECHO These binnings are isotropic (the same in each dimension).  The
+ECHO default binnings available are 1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
+ECHO 48, and 64. The default is to do a single scale at binning 12.
+ECHO.
+ECHO.
+ECHO Select size of boxes in XYZ
+ECHO 1  - Unbin scaler
+ECHO 2  - Use when you want to generate even more bins
+ECHO 4  - Use when you want to generate more bins
+ECHO 12 - 'Standard setting' - Works well for majority of flattening jobs
+ECHO ..........................................................................
+ECHO.
+ECHO.
+set /p SCALE=Enter size:
+cls
+
 ::## Set up a tomogram  axis for 'findsection'
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019 Kiewisz
+ECHO (c) 2019-2022 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -135,7 +164,7 @@ cls
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
-ECHO (c) 2019 Kiewisz
+ECHO (c) 2019-2022 Kiewisz
 ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
@@ -171,26 +200,34 @@ IF %S%==1 IF %M%==2 GOTO ASSIST
 ::## Full-automatic tomogram flattening
 :AUTO
 
+::## Set up a tomogram  axis for 'findsection'
+ECHO #############################################
+ECHO # Assisted or Automatic Tomogram Flattening #
+ECHO #############################################
+ECHO (c) 2019-2022 Kiewisz
+ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
+ECHO.
+ECHO.
+ECHO ..........................................................................
+ECHO Select a tomogram axis:
+ECHO.
+ECHO Rotation angle from Y axis to tilt axis in the raw tilt series,
+ECHO counterclockwise positive.  With this entry, the program will
+ECHO avoid analyzing regions outside the area that can be well-recon-
+ECHO structed from the original images.  However, the correct region
+ECHO is identified only if the aligned stack and reconstruction were
+ECHO centered on the original tilt series.
+ECHO ..........................................................................
+ECHO.
+ECHO.
+set /p AXIS=Enter axis:
+cls
+
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
 
-    findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
+    findsection -scal 12 -size 32,32,1 -axis %AXIS% -surf %%~I_flat.mod %%~I
     flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
-    warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
-	
-    del /f %%~I_flat.xf
-    cls
-)
-goto :EOF
-
-::## Full-automatic tomogram flattening with standard settings
-:AUTOSTD
-
-for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
-    Title AATF %%~I
-
-    findsection -scal 12 -size 32,32,1 -surf %%~I_flat.mod %%~I
-    flattenwarp -lambda 2 %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
@@ -204,25 +241,9 @@ goto :EOF
 for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
     Title AATF %%~I
 
-    findsection -scal 12 -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
+    findsection -scal %SCALE% -size %SIZE% -axis %AXIS% -surf %%~I_flat.mod %%~I
     START /WAIT 3dmod -Y %%I %%~I_flat.mod
     flattenwarp -lambda %LAMBDA% %%~I_flat.mod %%~I_flat.xf
-    warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
-	
-    del /f %%~I_flat.xf
-    cls
-)
-goto :EOF
-
-::## Assist tomogram flattening with a standard settings
-:ASSISTSTD
-
-for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') do (
-    Title AATF %%~I
-
-    findsection -scal 12 -size 32,32,1 -surf %%~I_flat.mod %%~I
-    START /WAIT 3dmod -Y %%I %%~I_flat.mod
-    flattenwarp -lambda 2 %%~I_flat.mod %%~I_flat.xf
     warpvol -InputFile %%~I -OutputFile %%~I_flat.rec -TransformFile %%~I_flat.xf -SameSizeAsInput
 	
     del /f %%~I_flat.xf
