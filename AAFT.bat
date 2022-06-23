@@ -48,10 +48,15 @@ ECHO.
 
 SET /P M=Select number then press ENTER:
 
-IF %M%==3 GOTO EOF
 IF %M%==1 GOTO AUTO
+IF %M%==2 GOTO SETTING
+IF %M%==3 GOTO EOF
 cls
 
+::## Set up a parameaters for 'findsection'
+:SETTING
+
+::## Set up a size of the box for 'findsection'
 ECHO #############################################
 ECHO # Assisted or Automatic Tomogram Flattening #
 ECHO #############################################
@@ -60,22 +65,25 @@ ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
 ECHO.
 ECHO.
 ECHO ..........................................................................
-ECHO Do you want to modify the standard parameters used for 'findsection'?
+ECHO Select box sizes
+ECHO.
+ECHO This option can be used to specify how many default binnings to
+ECHO analyze, instead of entering each one with the -binning option.
+ECHO These binnings are isotropic (the same in each dimension).  The
+ECHO default binnings available are 1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
+ECHO 48, and 64. The default is to do a single scale at binning 12.
+ECHO.
+ECHO.
+ECHO Select size of boxes in XYZ
+ECHO 1  - Unbin scaler
+ECHO 2  - Use when you want to generate even more bins
+ECHO 4  - Use when you want to generate more bins
+ECHO 12 - 'Standard setting' - Works well for majority of flattening jobs
 ECHO ..........................................................................
 ECHO.
 ECHO.
-ECHO 1 - Yes
-ECHO 2 - No
-ECHO.
-
-SET /P S=Select number then press ENTER:
+set /p SCALE=Enter size:
 cls
-
-IF %S%==1 GOTO SETTING
-IF %S%==2 IF %M%==2 GOTO ASSIST
-
-::## Set up a parameaters for 'findsection'
-:SETTING
 
 ::## Set up a size of the box for 'findsection'
 ECHO #############################################
@@ -106,35 +114,6 @@ ECHO ..........................................................................
 ECHO.
 ECHO.
 set /p SIZE=Enter size:
-cls
-
-::## Set up a size of the box for 'findsection'
-ECHO #############################################
-ECHO # Assisted or Automatic Tomogram Flattening #
-ECHO #############################################
-ECHO (c) 2019-2022 Kiewisz
-ECHO This code is licensed under GPL V3.0 license (see LICENSE.txt for details)
-ECHO.
-ECHO.
-ECHO ..........................................................................
-ECHO Select box sizes
-ECHO.
-ECHO This option can be used to specify how many default binnings to
-ECHO analyze, instead of entering each one with the -binning option.
-ECHO These binnings are isotropic (the same in each dimension).  The
-ECHO default binnings available are 1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
-ECHO 48, and 64. The default is to do a single scale at binning 12.
-ECHO.
-ECHO.
-ECHO Select size of boxes in XYZ
-ECHO 1  - Unbin scaler
-ECHO 2  - Use when you want to generate even more bins
-ECHO 4  - Use when you want to generate more bins
-ECHO 12 - 'Standard setting' - Works well for majority of flattening jobs
-ECHO ..........................................................................
-ECHO.
-ECHO.
-set /p SCALE=Enter size:
 cls
 
 ::## Set up a tomogram  axis for 'findsection'
@@ -194,8 +173,7 @@ ECHO.
 set /p LAMBDA=Enter size:
 cls
 
-IF %S%==1 IF %M%==1 GOTO AUTO
-IF %S%==1 IF %M%==2 GOTO ASSIST
+IF %M%==2 GOTO ASSIST
 
 ::## Full-automatic tomogram flattening
 :AUTO
@@ -249,11 +227,6 @@ for /f "delims=" %%I in ('powershell -noprofile "iex (${%~f0} | out-string)"') d
     del /f %%~I_flat.xf
     cls
 )
-goto :EOF
-
-
-:EOF
-
 goto :EOF
 
 : end Batch portion / begin PowerShell hybrid chimera #>
